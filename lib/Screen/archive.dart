@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:todo_app/widget/custom%20task.dart';
 
-class Likes extends StatefulWidget {
-  const Likes({Key? key}) : super(key: key);
-
+class Archive extends StatefulWidget {
+  const Archive({Key? key}) : super(key: key);
   @override
-  _LikesState createState() => _LikesState();
+  ArchiveState createState() => ArchiveState();
 }
 
-class _LikesState extends State<Likes> {
+class ArchiveState extends State<Archive> {
   @override
   Widget build(BuildContext context) {
     return ListView.separated(
@@ -23,6 +22,5 @@ class _LikesState extends State<Likes> {
           );
         },
         itemCount: 10);
-    //CustomTask();
   }
 }

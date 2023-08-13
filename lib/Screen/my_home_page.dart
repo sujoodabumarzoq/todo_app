@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:intl/intl.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:todo_app/CustomTextFormField.dart';
-import 'package:todo_app/Screen/likes.dart';
+import 'package:todo_app/Screen/archive.dart';
+import 'package:todo_app/Screen/done.dart';
+import 'package:todo_app/Screen/new_task.dart';
+import 'package:todo_app/widget/CustomTextFormField.dart';
+import 'package:todo_app/widget/constants.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key}) : super(key: key);
@@ -26,16 +29,10 @@ class MyHomePageState extends State<MyHomePage> {
   Color coloricon = Colors.blue;
   static const TextStyle optionStyle =
   TextStyle(fontSize: 30, fontWeight: FontWeight.w600);
-  static const List<Widget> _widgetOptions = <Widget>[
-    Text(
-      'Home',
-      style: optionStyle,
-    ),
-    Likes(),
-    Text(
-      'Search',
-      style: optionStyle,
-    ),
+  static  List<Widget> _widgetOptions = <Widget>[
+ NewTask(),
+const Done(),
+    const Archive(),
   ];
 
   @override
@@ -50,10 +47,14 @@ class MyHomePageState extends State<MyHomePage> {
       key: scafoldkey,
       backgroundColor: Colors.white,
       body: Center(
-        child: _widgetOptions.elementAt(_selectedIndex),
+        child: tasks == null
+            ? CircularProgressIndicator(
+
+        )
+            : _widgetOptions.elementAt(_selectedIndex),
       ),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: coloricon, // تحديد لون الزر
+        backgroundColor: coloricon,
 
         onPressed: () {
           if (shbootom) {
@@ -64,9 +65,11 @@ class MyHomePageState extends State<MyHomePage> {
               coloricon = Colors.blue;
             });
           } else {
-            scafoldkey.currentState!.showBottomSheet((context) {
+            scafoldkey.currentState!
+                .showBottomSheet((context) {
               return Padding(
-                padding: const EdgeInsets.only(left: 10, right: 10, top: 30),
+                padding:
+                const EdgeInsets.only(left: 10, right: 10, top: 30),
                 child: Form(
                   key: fromkey,
                   child: Column(
@@ -74,7 +77,8 @@ class MyHomePageState extends State<MyHomePage> {
                     children: [
                       GestureDetector(
                         onTap: () async {
-                          if (shbootom && fromkey.currentState!.validate()) {
+                          if (shbootom &&
+                              fromkey.currentState!.validate()) {
                             await insertdb(
                               title: _titleController.text,
                               date: _dateController.text,
@@ -133,8 +137,8 @@ class MyHomePageState extends State<MyHomePage> {
                             lastDate: DateTime.parse("2023-12-31"),
                           );
                           if (selectedDate != null) {
-                            final formattedDate =
-                            DateFormat('dd/MM/yyyy').format(selectedDate);
+                            final formattedDate = DateFormat('dd/MM/yyyy')
+                                .format(selectedDate);
                             _dateController.text = formattedDate;
                           }
                         },
@@ -184,7 +188,9 @@ class MyHomePageState extends State<MyHomePage> {
                   ),
                 ),
               );
-            }).closed.then((value) {
+            })
+                .closed
+                .then((value) {
               shbootom = false;
               setState(() {
                 fIcon = Icons.edit;
@@ -243,7 +249,7 @@ class MyHomePageState extends State<MyHomePage> {
                   ),
                   GButton(
                     icon: Icons.archive_outlined,
-                    text: 'Search',
+                    text: 'Archive',
                   ),
                 ],
                 selectedIndex: _selectedIndex,
@@ -274,9 +280,13 @@ class MyHomePageState extends State<MyHomePage> {
   status TEXT
 )''');
       print("creat");
-    }, onOpen: (db) {
+    }, onOpen: (database) {
       print("open ");
-      getdata(db);
+      getdata(database).then((value) {
+        setState(() {
+          tasks = value;
+        });
+      });
     });
   }
 
@@ -296,8 +306,7 @@ class MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  Future<    List<Map>> getdata(db) async {
-return await database!.rawQuery('SELECT * FROM Todo');
-
+  Future<List<Map>> getdata(database) async {
+    return await database!.rawQuery('SELECT * FROM Todo');
   }
 }
