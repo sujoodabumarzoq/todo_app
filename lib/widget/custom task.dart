@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 
-class CustomTask extends StatelessWidget {
-  const CustomTask({Key? key}) : super(key: key);
 
-  @override
-  Widget build(BuildContext context) {
+  Widget CustomTask(Map model) {
     return Padding(
       padding: const EdgeInsets.only(left: 20, top: 50, bottom: 25),
       child: Row(
@@ -18,10 +15,10 @@ class CustomTask extends StatelessWidget {
               borderRadius: const BorderRadius.all(Radius.circular(15)),
               border: Border.all(color: Colors.blue),
             ),
-            child: const Center(
+            child: Center(
               child: Text(
-                "12:00 AM",
-                style: TextStyle(
+                ' ${model?["data"]}',
+                style: const TextStyle(
                   fontSize: 24.0,
                   fontWeight: FontWeight.bold,
                   color: Colors.black,
@@ -33,13 +30,13 @@ class CustomTask extends StatelessWidget {
           const SizedBox(
             width: 20,
           ),
-          const Column(
+          Column(
             mainAxisAlignment: MainAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                "Tamil Sangam MN",
-                style: TextStyle(
+                ' ${model?["Title"]}',
+                style: const TextStyle(
                   fontSize: 20.0,
                   fontWeight: FontWeight.bold,
                   letterSpacing: 1.5,
@@ -47,8 +44,9 @@ class CustomTask extends StatelessWidget {
                 textAlign: TextAlign.start,
               ),
               Text(
-                "23/7/2002",
-                style: TextStyle(
+                ' ${model?["time"]}',
+
+                style: const TextStyle(
                   fontSize: 15.0,
                   fontWeight: FontWeight.bold,
                   color: Colors.grey,
@@ -62,4 +60,4 @@ class CustomTask extends StatelessWidget {
       ),
     );
   }
-}
+

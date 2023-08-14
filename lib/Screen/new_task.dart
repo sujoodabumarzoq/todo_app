@@ -9,7 +9,7 @@ class NewTask extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListView.separated(
         itemBuilder: (context, index) {
-          return const CustomTask();
+          return  CustomTask(tasks ![index]);
         },
         separatorBuilder: (context, index) {
           return Container(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:todo_app/widget/constants.dart';
 import 'package:todo_app/widget/custom%20task.dart';
 
 class Likes extends StatefulWidget {
@@ -13,7 +14,7 @@ class _LikesState extends State<Likes> {
   Widget build(BuildContext context) {
     return ListView.separated(
         itemBuilder: (context, index) {
-          return const CustomTask();
+          return  CustomTask(tasks![index]);
         },
         separatorBuilder: (context, index) {
           return Container(

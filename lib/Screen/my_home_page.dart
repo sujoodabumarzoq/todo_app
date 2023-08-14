@@ -7,6 +7,7 @@ import 'package:todo_app/Screen/done.dart';
 import 'package:todo_app/Screen/new_task.dart';
 import 'package:todo_app/widget/CustomTextFormField.dart';
 import 'package:todo_app/widget/constants.dart';
+import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key}) : super(key: key);
@@ -29,9 +30,9 @@ class MyHomePageState extends State<MyHomePage> {
   Color coloricon = Colors.blue;
   static const TextStyle optionStyle =
   TextStyle(fontSize: 30, fontWeight: FontWeight.w600);
-  static  List<Widget> _widgetOptions = <Widget>[
- NewTask(),
-const Done(),
+  static List<Widget> _widgetOptions = <Widget>[
+    NewTask(),
+    const Done(),
     const Archive(),
   ];
 
@@ -47,15 +48,19 @@ const Done(),
       key: scafoldkey,
       backgroundColor: Colors.white,
       body: Center(
-        child: tasks == null
-            ? CircularProgressIndicator(
-
-        )
-            : _widgetOptions.elementAt(_selectedIndex),
+        child: ConditionalBuilder(
+          condition: tasks != null && tasks!.length > 0,
+          builder: (context) {
+            return _widgetOptions.elementAt(_selectedIndex);
+          },
+          fallback: (context) {
+            return const CircularProgressIndicator();
+          },
+          // child: _widgetOptions.elementAt(_selectedIndex)
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: coloricon,
-
         onPressed: () {
           if (shbootom) {
             Navigator.pop(context);
@@ -75,30 +80,68 @@ const Done(),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      GestureDetector(
-                        onTap: () async {
-                          if (shbootom &&
-                              fromkey.currentState!.validate()) {
-                            await insertdb(
-                              title: _titleController.text,
-                              date: _dateController.text,
-                              time: _timeController.text,
-                            );
-                            Navigator.pop(context);
-                            shbootom = false;
-                            setState(() {
-                              fIcon = Icons.edit;
-                              coloricon = Colors.blue;
-                            });
-                          }
-                        },
-                        child: const Text(
-                          '✔',
-                          style: TextStyle(
-                              color: Colors.lightGreen,
-                              fontSize: 50,
-                              fontWeight: FontWeight.bold),
-                        ),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          GestureDetector(
+                            onTap: () async {
+                              if (shbootom &&
+                                  fromkey.currentState!.validate()) {
+                                await insertdb(
+                                  title: _titleController.text,
+                                  date: _dateController.text,
+                                  time: _timeController.text,
+                                );
+                                getdata(database).then((value) {
+                                  print("$value");
+                                  Navigator.pop(context);
+
+                                  setState(() {
+                                    tasks = value;
+                                    shbootom = false;
+                                    fIcon = Icons.edit;
+                                    coloricon = Colors.blue;
+                                  });
+                                });
+                              }
+                            },
+                            child: const Text(
+                              '✔',
+                              style: TextStyle(
+                                  color: Colors.lightGreen,
+                                  fontSize: 50,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                          SizedBox(
+                            width: 50,
+                          ),
+                          GestureDetector(
+                            onTap: () async {
+
+                              deleteDatabase(path).then((values) {
+
+                                print("delet$tasks");
+                                Navigator.pop(context);
+
+                                setState(() {
+                                  tasks = tasks;
+                                  shbootom = false;
+                                  fIcon = Icons.edit;
+                                  coloricon = Colors.blue;
+                                });
+                              });
+                            },
+
+                            child: const Text(
+                              'x',
+                              style: TextStyle(
+                                  color: Colors.lightGreen,
+                                  fontSize: 50,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ],
                       ),
                       const SizedBox(
                         height: 30,
@@ -283,6 +326,8 @@ const Done(),
     }, onOpen: (database) {
       print("open ");
       getdata(database).then((value) {
+        print("$value");
+
         setState(() {
           tasks = value;
         });
@@ -309,4 +354,8 @@ const Done(),
   Future<List<Map>> getdata(database) async {
     return await database!.rawQuery('SELECT * FROM Todo');
   }
+  Future<void> deletdata(int id) async {
+    await database!.rawDelete('DELETE FROM Todo WHERE Id = ?', [id]);
+  }
+
 }
