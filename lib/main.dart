@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:todo_app/Screen/loginscreen.dart';
 
 import 'Screen/my_home_page.dart';
 
@@ -14,11 +13,11 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-debugShowCheckedModeBanner: false,
 
-      home:  Loginscreen(),
-    );
+
+        return const MaterialApp(
+          home: MyHomePage(),
+        );
+
   }
 }
-

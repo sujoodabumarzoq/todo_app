@@ -80,9 +80,7 @@ class MyHomePageState extends State<MyHomePage> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
+
                           GestureDetector(
                             onTap: () async {
                               if (shbootom &&
@@ -113,36 +111,7 @@ class MyHomePageState extends State<MyHomePage> {
                                   fontWeight: FontWeight.bold),
                             ),
                           ),
-                          SizedBox(
-                            width: 50,
-                          ),
-                          GestureDetector(
-                            onTap: () async {
 
-                              deleteDatabase(path).then((values) {
-
-                                print("delet$tasks");
-                                Navigator.pop(context);
-
-                                setState(() {
-                                  tasks = tasks;
-                                  shbootom = false;
-                                  fIcon = Icons.edit;
-                                  coloricon = Colors.blue;
-                                });
-                              });
-                            },
-
-                            child: const Text(
-                              'x',
-                              style: TextStyle(
-                                  color: Colors.lightGreen,
-                                  fontSize: 50,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                        ],
-                      ),
                       const SizedBox(
                         height: 30,
                       ),
