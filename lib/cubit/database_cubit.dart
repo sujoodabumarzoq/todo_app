@@ -15,9 +15,11 @@ class DatabaseCubit extends Cubit<DatabaseState> {
   }
 
   int selectedIndex = 0;
-  List<Map>? Newtask ;
-  List<Map>? Donetasks ;
-  List<Map>? Archivetasks ;
+  List<Map> Newtask = [];
+
+  List<Map> Donetasks = [];
+
+  List<Map> Archivetasks = [];
 
   static const TextStyle optionStyle =
       TextStyle(fontSize: 30, fontWeight: FontWeight.w600);
@@ -42,7 +44,6 @@ class DatabaseCubit extends Cubit<DatabaseState> {
 )''');
       print("creat");
     }, onOpen: (database) {
-
       getdata(database);
       print("open ");
     }).then((value) {
@@ -63,16 +64,15 @@ class DatabaseCubit extends Cubit<DatabaseState> {
       emit(DatabaseInsert());
 
       getdata(database);
-      })
-    .catchError((onError) {
+    }).catchError((onError) {
       print("$onError: no success");
     });
   }
 
-   getdata(database)  {
-     Newtask = [];
-     Donetasks = [];
-     Archivetasks = [];
+  getdata(database) {
+    Newtask = [];
+    Donetasks = [];
+    Archivetasks = [];
 
     emit(DatabaseLoading());
 
@@ -81,18 +81,18 @@ class DatabaseCubit extends Cubit<DatabaseState> {
 
       value.forEach((element) {
         print(element['status']);
-        if (element['status'] == "new")
-          Newtask?.add(element);
-        else if (element['status'] == "Done")
-          Donetasks?.add(element);
+        if (element['status'] == "new") {
+          Newtask.add(element);
+        } else if (element['status'] == "Done")
+          Donetasks.add(element);
         else
-          Archivetasks?.add(element);
+          Archivetasks.add(element);
       });
 
-
-
-      emit(DatabaseGet()); });
+      emit(DatabaseGet());
+    });
   }
+
   void changeindex(int Index) {
     selectedIndex = Index;
     emit(changebootom());
@@ -112,37 +112,29 @@ class DatabaseCubit extends Cubit<DatabaseState> {
     coloricon = backgrundcolor;
     emit(changeFloatingActionButton());
   }
+
   bool isChecked = false;
 
   void Checkbox({
     Checked,
-}){
-
-    isChecked = Checked;
-  emit(DatabaseCheckbox());
+  }) {
+    isChecked = !isChecked; // تغيير قيمة isChecked بين true و false
+    emit(DatabaseCheckbox());
   }
-
-
-
-
-
-
-
-
-
 
   void update({
     required String status,
     required int id,
-  }) {
-
-    database
-        ?.rawUpdate('UPDATE Todo SET status = ? WHERE id = ?', ['$status', id
-    ]
-    ).then((value){
+  }) async {
+    // قم بتحديث حالة المهمة في قاعدة البيانات
+    await database?.rawUpdate("UPDATE Todo SET status = ? WHERE id = ?",
+        ["$status", id]).then((value) {
+      // بعد نجاح التحديث في قاعدة البيانات، قم بتحديث القوائم (Newtask، Donetasks، Archivetasks)
       getdata(database);
 
+      // بعد ذلك، قم بإصدار الحالة الجديدة لإعادة بناء واجهة المستخدم
       emit(DatabaseUpdate());
     });
   }
+
 }
