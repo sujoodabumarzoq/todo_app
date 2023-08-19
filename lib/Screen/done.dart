@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../cubit/database_cubit.dart';
+import '../widget/custom task.dart';
 
 class Done extends StatefulWidget {
   const Done({Key? key}) : super(key: key);
@@ -10,30 +14,33 @@ class Done extends StatefulWidget {
 class _DoneState extends State<Done> {
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          GestureDetector(onTap: (){
-            setState(() {
-              Number ++ ;
+    return BlocConsumer<DatabaseCubit, DatabaseState>(
+      listener: (context, state) {
+        // TODO: implement listener
+      },
+      builder: (context, state) {
+        var tasks = DatabaseCubit.get(context).Donetasks;
 
-            });
-          },child: Text("+",style: TextStyle(fontSize: 50),)),
-          SizedBox(
-            width: 20,
-          ),
-          Text("$Number",style: TextStyle(fontSize: 50),),
-          SizedBox(
-            width: 20,
-          ),
-    GestureDetector(onTap: (){
-      setState(() {
-        Number--;
+        if (tasks == null) {
+          return CircularProgressIndicator();
+        }
 
-      });    },child: Text("-",style: TextStyle(fontSize: 50),),)
-        ],
-      ),
+        return Padding(
+          padding: const EdgeInsets.only(left: 10, top: 50, right: 10),
+          child: ListView.separated(
+              itemBuilder: (context, index) {
+                return CustomTask(tasks![index], context);
+              },
+              separatorBuilder: (context, index) {
+                return Container(
+                  height: 1.0,
+                  width: double.infinity,
+                  color: Colors.grey[300],
+                );
+              },
+              itemCount: tasks!.length),
+        );
+      },
     );
   }
 }

@@ -1,8 +1,12 @@
+import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:todo_app/Screen/likes.dart';
+import 'package:todo_app/widget/constants.dart';
 
 import 'Screen/my_home_page.dart';
 
 void main() {
+  Bloc.observer = MyBlocObserver();
 
   runApp(const MyApp());
 }
@@ -15,8 +19,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
 
 
-        return const MaterialApp(
-          home: MyHomePage(),
+        return  MaterialApp(
+          debugShowCheckedModeBanner: false,
+          home:  MyHomePage(),
         );
 
   }
